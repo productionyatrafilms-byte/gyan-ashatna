@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-lang-key="pranam"></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <style>
+      .language-container {
+        position: fixed;
+        top: 1.5vw;
+        right: 5%;
+        display: flex;
+        width: 9vw;
+        padding: 0.2vw 0.3vw;
+        height: auto;
+        justify-content: space-between;
+        align-items: center;
+        border: 0.3vw solid transparent;
+        background-color: white;
+        border-radius: 50vw;
+        pointer-events: auto;
+        z-index: 1000;
+        opacity: 1;
+      }
+      .language-container div {
+        width: 2.5vw;
+        height: 2.5vw;
+        font-size: 1.6vw;
+        text-align: center;
+        border: 0.3vw solid #1c6152;
+        background: transparent !important;
+        color: #1c6152;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+      }
+
+      .language-container div:hover {
+        background-color: #1c6152 !important;
+        color: white;
+      }
+
+      .language-container div.active {
+        background-color: #1c6152 !important;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <video autoplay muted loop playsinline id="bg-video">
+      <source
+        src="./assets/videos/0_Calculator_Object_1920x1080.mp4"
+        type="video/webm"
+      />
+      <source src="./assets/videos/bg-video.mp4" type="video/mp4" />
+    </video>
+
+    <a href="index.html?topic=3" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <div class="language-container">
+      <div class="english active">E</div>
+      <div class="hindi">H</div>
+      <div class="gujrati">G</div>
+    </div>
+
+    <div class="pranam-container">
+      <div class="pranam-img">
+        <span data-lang-key="pranam"></span>
+        <img src="./assets/images/pranam-img.png" alt="" />
+      </div>
+      <a href="index.html" class="home-btn-1">
+        <span data-lang-key="home"></span>
+        <img src="./assets/images/home-btn-1.png" alt="" />
+      </a>
+    </div>
+
+    <script>
+      const btnEn = document.querySelector(".english");
+      const btnHi = document.querySelector(".hindi");
+      const btnGu = document.querySelector(".gujrati");
+
+      const DEFAULT_LANG = "English";
+      let translations = {};
+
+      function setActiveButton(activeBtn) {
+        [btnEn, btnHi, btnGu].forEach((btn) => btn.classList.remove("active"));
+        activeBtn.classList.add("active");
+      }
+
+      function applyLanguage(lang) {
+        const langData = translations[lang];
+        if (!langData) return;
+
+        document.documentElement.lang = lang;
+
+        if (lang === "English") {
+          document.body.setAttribute("data-lang", "en");
+          setActiveButton(btnEn);
+        } else if (lang === "Hindi") {
+          document.body.setAttribute("data-lang", "hi");
+          setActiveButton(btnHi);
+        } else if (lang === "Gujarati") {
+          document.body.setAttribute("data-lang", "gu");
+          setActiveButton(btnGu);
+        }
+
+        document.querySelectorAll("[data-lang-key]").forEach((el) => {
+          const key = el.getAttribute("data-lang-key");
+          if (langData[key] !== undefined) {
+            el.innerHTML = String(langData[key]).replace(/\n/g, "<br>");
+          }
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        fetch("./assets/json/data.json")
+          .then((res) => res.json())
+          .then((data) => {
+            translations = data;
+            applyLanguage(DEFAULT_LANG);
+          })
+          .catch((err) => console.error("Error loading translations:", err));
+      });
+
+      btnEn.addEventListener("click", () => applyLanguage("English"));
+      btnHi.addEventListener("click", () => applyLanguage("Hindi"));
+      btnGu.addEventListener("click", () => applyLanguage("Gujarati"));
+    </script>
+  </body>
+</html>

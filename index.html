@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Document</title>
+
+  <link rel="stylesheet" href="./assets/css/style.css" />
+
+  <!-- Swiper CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+  />
+</head>
+
+<body>
+
+  <!-- Background Video -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source
+      src="./assets/videos/0_Calculator_Object_1920x1080.mp4"
+      type="video/webm"
+    />
+
+    <source
+      src="./assets/videos/bg-video.mp4"
+      type="video/mp4"
+    />
+  </video>
+
+
+  <!-- Home Button -->
+  <a class="home-button home-btn">
+    <img
+      src="./assets/images/home.png"
+      alt="Home"
+    />
+  </a>
+
+
+  <!-- Intro -->
+  <div class="intro">
+
+    <span data-lang-key="title"></span>
+
+    <button
+      class="click"
+      data-lang-key="click"
+      type="button"
+    >
+      click
+    </button>
+
+  </div>
+
+
+  <!-- Page Title -->
+  <div class="page-title">
+    <span data-lang-key="title"></span>
+  </div>
+
+
+  <!-- Language Buttons -->
+  <div class="language-container">
+
+    <div class="english active">
+      E
+    </div>
+
+    <div class="hindi">
+      H
+    </div>
+
+    <div class="gujrati">
+      G
+    </div>
+
+  </div>
+
+
+  <main>
+
+    <!-- ==================================================
+         TOPIC CONTAINER
+    =================================================== -->
+
+    <div class="topic-container">
+
+      <a
+        class="topic topic-4"
+        href="#"
+        data-topic="4"
+        data-lang-key="title-4"
+      ></a>
+
+
+      <a
+        class="topic topic-1"
+        href="#"
+        data-topic="1"
+        data-lang-key="title-1"
+      ></a>
+
+
+      <a
+        class="topic topic-2"
+        href="#"
+        data-topic="2"
+        data-lang-key="title-2"
+      ></a>
+
+
+      <a
+        class="topic topic-3"
+        href="#"
+        data-topic="3"
+        data-lang-key="title-3"
+      ></a>
+
+    </div>
+
+
+    <!-- ==================================================
+         SWIPER SECTION
+    =================================================== -->
+
+    <div class="custom-swiper-section">
+
+      <!-- Video Frame -->
+      <div class="video-frame">
+
+        <div class="video-swiper swiper">
+
+          <div
+            class="swiper-wrapper"
+            id="video-swiper-wrapper"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Previous Button -->
+      <button
+        class="swiper-nav prev-btn"
+        type="button"
+        aria-label="Previous slide"
+      >
+
+        <img
+          src="./assets/images/prev-btn.png"
+          alt="Previous"
+        />
+
+      </button>
+
+
+      <!-- Next Button -->
+      <button
+        class="swiper-nav next-btn"
+        type="button"
+        aria-label="Next slide"
+      >
+
+        <img
+          src="./assets/images/next-btn.png"
+          alt="Next"
+        />
+
+      </button>
+
+
+      <!-- Content Frame -->
+      <div class="content-frame">
+
+        <div class="content-swiper swiper">
+
+          <div
+            class="swiper-wrapper"
+            id="content-swiper-wrapper"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- Your JS -->
+  <script src="./assets/js/app.js"></script>
+
+</body>
+
+</html>
