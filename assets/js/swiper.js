@@ -128,20 +128,6 @@ const topicSlides = {
 // TOPIC 4 SLIDE TEXT
 // ======================================================
 
-/*
-  This is a fallback dictionary.
-
-  If your JSON language files already contain
-  "slide-4.1" and "slide-4.2", applyLanguage()
-  will fill the text and this is never used.
-
-  If the key is missing, this keeps the slide
-  from showing an empty paragraph.
-
-  Replace the sample sentences below with your
-  real lines.
-*/
-
 const slideTranslations = {
 
   English: {
@@ -188,6 +174,9 @@ const languageButtons =
   document.querySelectorAll(
     ".language-container div"
   );
+
+const pranamLink =
+  document.querySelector(".pranam-link");
 
 
 // ======================================================
@@ -261,14 +250,13 @@ function pauseAllVideos() {
 
     video.pause();
 
-
     try {
 
       video.currentTime = 0;
 
     } catch (error) {
 
-      // Ignore error
+      // Ignore
 
     }
 
@@ -292,7 +280,15 @@ function playActiveVideo(index) {
   if (!activeVideo) return;
 
 
-  activeVideo.currentTime = 0;
+  try {
+
+    activeVideo.currentTime = 0;
+
+  } catch (error) {
+
+    // Ignore
+
+  }
 
 
   const playPromise =
@@ -313,34 +309,138 @@ function playActiveVideo(index) {
 
 
 // ======================================================
+// HIDE PRANAM LINK
+// ======================================================
+
+function hidePranamLink() {
+
+  if (!pranamLink) return;
+
+  pranamLink.classList.remove("show");
+
+  pranamLink.style.display = "none";
+  pranamLink.style.opacity = "0";
+  pranamLink.style.visibility = "hidden";
+  pranamLink.style.pointerEvents = "none";
+
+}
+
+
+// ======================================================
+// SHOW PRANAM LINK
+// ======================================================
+
+function showPranamLink() {
+
+  if (!pranamLink) return;
+
+  pranamLink.classList.add("show");
+
+  pranamLink.style.display = "flex";
+  pranamLink.style.opacity = "1";
+  pranamLink.style.visibility = "visible";
+  pranamLink.style.pointerEvents = "auto";
+
+}
+
+
+// ======================================================
+// UPDATE PRANAM LINK
+// SHOW ONLY ON slide-16.mp4
+// ======================================================
+
+function updatePranamLink(index) {
+
+  // Always hide first
+  hidePranamLink();
+
+
+  if (!slidesData.length) return;
+
+  if (!slidesData[index]) return;
+
+
+  const currentSlide =
+    slidesData[index];
+
+
+  // Show ONLY on slide-16.mp4
+  if (
+    currentSlide.video &&
+    currentSlide.video.includes("slide-16.mp4")
+  ) {
+
+    showPranamLink();
+
+  }
+
+}
+
+
+// ======================================================
 // UPDATE PREVIOUS / NEXT BUTTON
 // ======================================================
 
 function updateButtons(index) {
 
-  if (!slidesData.length) return;
+  if (!slidesData.length) {
+
+    hidePranamLink();
+
+    return;
+
+  }
 
 
-  // Previous
-  prevBtn.classList.toggle(
-    "disabled",
-    index === 0
-  );
+  // ====================================================
+  // PREVIOUS BUTTON
+  // ====================================================
+
+  if (prevBtn) {
+
+    const isFirstSlide =
+      index === 0;
 
 
-  prevBtn.disabled =
-    index === 0;
+    prevBtn.classList.toggle(
+      "disabled",
+      isFirstSlide
+    );
 
 
-  // Next
-  nextBtn.classList.toggle(
-    "disabled",
-    index === slidesData.length - 1
-  );
+    prevBtn.disabled =
+      isFirstSlide;
+
+  }
 
 
-  nextBtn.disabled =
-    index === slidesData.length - 1;
+  // ====================================================
+  // NEXT BUTTON
+  // ====================================================
+
+  if (nextBtn) {
+
+    const isLastSlide =
+      index === slidesData.length - 1;
+
+
+    nextBtn.classList.toggle(
+      "disabled",
+      isLastSlide
+    );
+
+
+    nextBtn.disabled =
+      isLastSlide;
+
+  }
+
+
+  // ====================================================
+  // PRANAM LINK
+  // ====================================================
+
+  updatePranamLink(index);
 
 }
 
@@ -383,7 +483,6 @@ function fillMissingLangText(language) {
     .querySelectorAll("[data-lang-key]")
     .forEach((element) => {
 
-      // Already filled by applyLanguage()
       if (element.textContent.trim()) {
 
         return;
@@ -392,7 +491,9 @@ function fillMissingLangText(language) {
 
 
       const key =
-        element.getAttribute("data-lang-key");
+        element.getAttribute(
+          "data-lang-key"
+        );
 
 
       element.textContent =
@@ -404,7 +505,7 @@ function fillMissingLangText(language) {
 
 
 // ======================================================
-// APPLY CURRENT LANGUAGE AGAIN
+// REFRESH CURRENT LANGUAGE
 // ======================================================
 
 function refreshCurrentLanguage() {
@@ -413,8 +514,6 @@ function refreshCurrentLanguage() {
     getCurrentLanguage();
 
 
-  // Clear slide text first so a language
-  // switch actually re-renders
   if (contentWrapper) {
 
     contentWrapper
@@ -428,15 +527,15 @@ function refreshCurrentLanguage() {
   }
 
 
-  // Your existing translation function
-  if (typeof applyLanguage === "function") {
+  if (
+    typeof applyLanguage === "function"
+  ) {
 
     applyLanguage(language);
 
   }
 
 
-  // Fallback for any key not found
   fillMissingLangText(language);
 
 }
@@ -459,110 +558,117 @@ function createTopicSlides(topicNumber) {
   }
 
 
-  // Store current data
+  // Save current topic
   currentTopic =
     topicNumber;
 
 
+  // Save current slides
   slidesData =
     selectedSlides;
 
 
-  // Stop any old video
+  // Hide Pranam link when topic changes
+  hidePranamLink();
+
+
+  // Stop old videos
   pauseAllVideos();
 
 
-  // Remove old Swiper slides
+  // Remove old slides
   videoSwiper.removeAllSlides();
 
   contentSwiper.removeAllSlides();
 
 
-  // Arrays for new slides
   const videoSlides = [];
 
   const contentSlides = [];
 
 
-  selectedSlides.forEach((slide, index) => {
-
-    // ==================================================
-    // VIDEO SLIDE
-    // ==================================================
-
-    videoSlides.push(`
-      <div
-        class="swiper-slide"
-        data-slide-index="${index}"
-      >
-
-        <div class="video-slide-inner">
-
-          <video
-            playsinline
-            muted
-            preload="metadata"
-          >
-
-            <source
-              src="${slide.video}"
-              type="video/mp4"
-            />
-
-          </video>
-
-        </div>
-
-      </div>
-    `);
+  selectedSlides.forEach(
+    (slide, index) => {
 
 
-    // ==================================================
-    // CONTENT SLIDE
-    // ==================================================
+      // ==================================================
+      // VIDEO SLIDE
+      // ==================================================
 
-    let contentHTML = "";
+      videoSlides.push(`
+        <div
+          class="swiper-slide"
+          data-slide-index="${index}"
+        >
 
+          <div class="video-slide-inner">
 
-    // If language key exists
-    if (slide.langKey) {
+            <video
+              playsinline
+              muted
+              preload="metadata"
+            >
 
-      contentHTML = `
-        <p data-lang-key="${slide.langKey}"></p>
-      `;
+              <source
+                src="${slide.video}"
+                type="video/mp4"
+              />
 
-    }
+            </video>
 
-    // Normal text
-    else {
-
-      contentHTML = `
-        <p>${slide.text}</p>
-      `;
-
-    }
-
-
-    contentSlides.push(`
-      <div
-        class="swiper-slide"
-        data-slide-index="${index}"
-      >
-
-        <div class="content-slide-inner">
-
-          ${contentHTML}
+          </div>
 
         </div>
+      `);
 
-      </div>
-    `);
 
-  });
+      // ==================================================
+      // CONTENT
+      // ==================================================
+
+      let contentHTML = "";
+
+
+      if (slide.langKey) {
+
+        contentHTML = `
+          <p
+            data-lang-key="${slide.langKey}"
+          ></p>
+        `;
+
+      } else {
+
+        contentHTML = `
+          <p>
+            ${slide.text}
+          </p>
+        `;
+
+      }
+
+
+      contentSlides.push(`
+        <div
+          class="swiper-slide"
+          data-slide-index="${index}"
+        >
+
+          <div class="content-slide-inner">
+
+            ${contentHTML}
+
+          </div>
+
+        </div>
+      `);
+
+    }
+  );
 
 
   // ====================================================
-  // ADD SLIDES TO SWIPERS
+  // ADD SLIDES
   // ====================================================
 
   videoSwiper.appendSlide(
@@ -575,7 +681,6 @@ function createTopicSlides(topicNumber) {
   );
 
 
-  // Update
   videoSwiper.update();
 
   contentSwiper.update();
@@ -597,34 +702,37 @@ function createTopicSlides(topicNumber) {
   );
 
 
-  // Reapply E / H / G language
   refreshCurrentLanguage();
 
 
-  // Play first video
   pauseAllVideos();
 
   playActiveVideo(0);
 
 
-  // Buttons
   updateButtons(0);
 
 }
 
 
 // ======================================================
-// OPEN SWIPER
+// OPEN TOPIC SWIPER
 // ======================================================
 
 function openTopicSwiper(topicNumber) {
 
-  // Load selected topic
-  createTopicSlides(topicNumber);
+  createTopicSlides(
+    topicNumber
+  );
 
 
-  // Open same swiper section
-  swiperSection.classList.add("active");
+  if (swiperSection) {
+
+    swiperSection.classList.add(
+      "active"
+    );
+
+  }
 
 }
 
@@ -635,31 +743,44 @@ function openTopicSwiper(topicNumber) {
 
 topicButtons.forEach((topic) => {
 
-  topic.addEventListener("click", (event) => {
+  topic.addEventListener(
+    "click",
+    (event) => {
 
-    event.preventDefault();
-
-
-    const topicNumber =
-      Number(topic.dataset.topic);
+      event.preventDefault();
 
 
-    // Remove active from all topics
-    topicButtons.forEach((item) => {
-
-      item.classList.remove("active");
-
-    });
+      hidePranamLink();
 
 
-    // Add active to clicked topic
-    topic.classList.add("active");
+      const topicNumber =
+        Number(
+          topic.dataset.topic
+        );
 
 
-    // Open swiper
-    openTopicSwiper(topicNumber);
+      topicButtons.forEach(
+        (item) => {
 
-  });
+          item.classList.remove(
+            "active"
+          );
+
+        }
+      );
+
+
+      topic.classList.add(
+        "active"
+      );
+
+
+      openTopicSwiper(
+        topicNumber
+      );
+
+    }
+  );
 
 });
 
@@ -668,79 +789,92 @@ topicButtons.forEach((topic) => {
 // LANGUAGE BUTTON CLICKS
 // ======================================================
 
-/*
-  Topic slides are created after page load,
-  so they must be re-translated whenever the
-  user switches E / H / G.
+languageButtons.forEach(
+  (button) => {
 
-  setTimeout lets your main language handler
-  write localStorage first.
-*/
+    button.addEventListener(
+      "click",
+      () => {
 
-languageButtons.forEach((button) => {
+        setTimeout(
+          () => {
 
-  button.addEventListener("click", () => {
+            refreshCurrentLanguage();
 
-    setTimeout(() => {
+          },
+          0
+        );
 
-      refreshCurrentLanguage();
+      }
+    );
 
-    }, 0);
-
-  });
-
-});
+  }
+);
 
 
 // ======================================================
 // PREVIOUS BUTTON
 // ======================================================
 
-prevBtn.addEventListener("click", () => {
+if (prevBtn) {
 
-  const currentIndex =
-    contentSwiper.activeIndex;
+  prevBtn.addEventListener(
+    "click",
+    () => {
 
-
-  if (currentIndex <= 0) {
-
-    return;
-
-  }
+      const currentIndex =
+        contentSwiper.activeIndex;
 
 
-  goToSlide(
-    currentIndex - 1
+      if (currentIndex <= 0) {
+
+        return;
+
+      }
+
+
+      goToSlide(
+        currentIndex - 1
+      );
+
+    }
   );
 
-});
+}
 
 
 // ======================================================
 // NEXT BUTTON
 // ======================================================
 
-nextBtn.addEventListener("click", () => {
+if (nextBtn) {
 
-  const currentIndex =
-    contentSwiper.activeIndex;
+  nextBtn.addEventListener(
+    "click",
+    () => {
 
-
-  if (
-    currentIndex >=
-    slidesData.length - 1
-  ) {
-
-    return;
-
-  }
+      const currentIndex =
+        contentSwiper.activeIndex;
 
 
-  goToSlide(
-    currentIndex + 1
+      if (
+        currentIndex >=
+        slidesData.length - 1
+      ) {
+
+        return;
+
+      }
+
+
+      goToSlide(
+        currentIndex + 1
+      );
+
+    }
   );
 
-});
+}
 
 
 // ======================================================
@@ -762,12 +896,23 @@ function goToSlide(index) {
   pauseAllVideos();
 
 
-  videoSwiper.slideTo(index);
+  // Update pranam immediately
+  updatePranamLink(index);
 
-  contentSwiper.slideTo(index);
+
+  videoSwiper.slideTo(
+    index
+  );
 
 
-  updateButtons(index);
+  contentSwiper.slideTo(
+    index
+  );
+
+
+  updateButtons(
+    index
+  );
 
 }
 
@@ -807,6 +952,11 @@ videoSwiper.on(
       activeIndex
     );
 
+
+    updatePranamLink(
+      activeIndex
+    );
+
   }
 );
 
@@ -823,7 +973,6 @@ contentSwiper.on(
       contentSwiper.activeIndex;
 
 
-    // Keep video swiper synced
     if (
       videoSwiper.activeIndex !==
       activeIndex
@@ -840,34 +989,74 @@ contentSwiper.on(
       activeIndex
     );
 
+
+    updatePranamLink(
+      activeIndex
+    );
+
   }
 );
+
+
+// ======================================================
+// CONTENT TRANSITION END
+// Extra safety to ensure Pranam appears
+// ======================================================
+
+contentSwiper.on(
+  "slideChangeTransitionEnd",
+  () => {
+
+    const activeIndex =
+      contentSwiper.activeIndex;
+
+
+    updatePranamLink(
+      activeIndex
+    );
+
+  }
+);
+
+
+// ======================================================
+// PRANAM LINK CLICK
+// ======================================================
+
+if (pranamLink) {
+
+  pranamLink.addEventListener(
+    "click",
+    () => {
+
+      hidePranamLink();
+
+    }
+  );
+
+}
 
 
 // ======================================================
 // INITIAL STATE
 // ======================================================
 
-window.addEventListener("load", () => {
+window.addEventListener(
+  "load",
+  () => {
 
-  /*
-    Swiper remains closed initially.
+    // Swiper closed initially
+    if (swiperSection) {
 
-    When user clicks:
-    Topic 1
-    Topic 2
-    Topic 3
-    Topic 4
+      swiperSection.classList.remove(
+        "active"
+      );
 
-    the same Swiper section opens.
-  */
+    }
 
-  if (swiperSection) {
 
-    swiperSection.classList.remove(
-      "active"
-    );
+    // Pranam hidden initially
+    hidePranamLink();
 
   }
-
-});
+);

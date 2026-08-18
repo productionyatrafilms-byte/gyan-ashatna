@@ -4,29 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title data-lang-key="pranam"></title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-    />
+    <link rel="stylesheet" href="./fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/style.css" />
     <style>
       .language-container {
-        position: fixed;
-        top: 1.5vw;
-        right: 5%;
-        display: flex;
-        width: 9vw;
-        padding: 0.2vw 0.3vw;
-        height: auto;
-        justify-content: space-between;
-        align-items: center;
-        border: 0.3vw solid transparent;
-        background-color: white;
-        border-radius: 50vw;
-        pointer-events: auto;
-        z-index: 1000;
-        opacity: 1;
-      }
+  position: fixed;
+  top: 1.5vw;
+  right: 7.5vw!important;
+  display: flex;
+  width: 9vw;
+  padding: 0.2vw 0.3vw;
+  height: auto;
+  justify-content: space-between;
+  align-items: center;
+  border: 0.3vw solid transparent;
+  background-color: white;
+  border-radius: 50vw;
+  pointer-events: auto;
+  z-index: 1000;
+  opacity: 1;
+}
+
       .language-container div {
         width: 2.5vw;
         height: 2.5vw;
@@ -53,6 +51,7 @@
       }
     </style>
   </head>
+
   <body>
     <video autoplay muted loop playsinline id="bg-video">
       <source
@@ -74,66 +73,222 @@
 
     <div class="pranam-container">
       <div class="pranam-img">
+        <div class="pranam-video">
+          <video src="./assets/videos/pranam.mp4" autoplay muted></video>
+        </div>
         <span data-lang-key="pranam"></span>
         <img src="./assets/images/pranam-img.png" alt="" />
       </div>
+
       <a href="index.html" class="home-btn-1">
         <span data-lang-key="home"></span>
         <img src="./assets/images/home-btn-1.png" alt="" />
       </a>
     </div>
 
+    <script src="./assets/js/djp.js"></script>
+
     <script>
-      const btnEn = document.querySelector(".english");
-      const btnHi = document.querySelector(".hindi");
-      const btnGu = document.querySelector(".gujrati");
+      (function () {
+        "use strict";
 
-      const DEFAULT_LANG = "English";
-      let translations = {};
+        const btnEn = document.querySelector(".english");
+        const btnHi = document.querySelector(".hindi");
+        const btnGu = document.querySelector(".gujrati");
 
-      function setActiveButton(activeBtn) {
-        [btnEn, btnHi, btnGu].forEach((btn) => btn.classList.remove("active"));
-        activeBtn.classList.add("active");
-      }
+        const backBtn = document.querySelector(".back-btn");
+        const homeBtn1 = document.querySelector(".home-btn-1");
 
-      function applyLanguage(lang) {
-        const langData = translations[lang];
-        if (!langData) return;
+        const DEFAULT_LANG = "English";
+        const STORAGE_LANG_KEY = "selectedLanguage";
+        let translations = {};
 
-        document.documentElement.lang = lang;
+        /* ==================================================
+           AUDIO
+        =================================================== */
 
-        if (lang === "English") {
-          document.body.setAttribute("data-lang", "en");
-          setActiveButton(btnEn);
-        } else if (lang === "Hindi") {
-          document.body.setAttribute("data-lang", "hi");
-          setActiveButton(btnHi);
-        } else if (lang === "Gujarati") {
-          document.body.setAttribute("data-lang", "gu");
-          setActiveButton(btnGu);
+        const AUDIO_PATH = "./assets/audio/";
+
+        // longest a nav sound is allowed to hold the page before leaving
+        const MAX_NAV_WAIT = 1200;
+
+        const SFX = {
+          pranam: new Audio(`${AUDIO_PATH}pranam.mp3`),
+          home: new Audio(`${AUDIO_PATH}-1.mp3`),
+          pop: new Audio(`${AUDIO_PATH}pop.mp3`),
+        };
+
+        Object.values(SFX).forEach((audio) => {
+          audio.preload = "auto";
+        });
+
+        let pranamHasPlayed = false;
+
+        // play the page load sound once and never again
+        function playPranamOnce() {
+          if (pranamHasPlayed) return;
+          pranamHasPlayed = true;
+
+          const playPromise = SFX.pranam.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+              // browser blocked autoplay, so retry on the first real interaction
+              pranamHasPlayed = false;
+              console.warn("pranam audio blocked, waiting for interaction:", err);
+              waitForInteraction();
+            });
+          }
         }
 
-        document.querySelectorAll("[data-lang-key]").forEach((el) => {
-          const key = el.getAttribute("data-lang-key");
-          if (langData[key] !== undefined) {
-            el.innerHTML = String(langData[key]).replace(/\n/g, "<br>");
+        function waitForInteraction() {
+          const trigger = () => {
+            document.removeEventListener("click", trigger);
+            document.removeEventListener("keydown", trigger);
+            document.removeEventListener("touchstart", trigger);
+            playPranamOnce();
+          };
+
+          document.addEventListener("click", trigger, { once: true });
+          document.addEventListener("keydown", trigger, { once: true });
+          document.addEventListener("touchstart", trigger, { once: true });
+        }
+
+        // play a sound, then leave the page once it finishes or the cap is hit
+        function playThenNavigate(name, url) {
+          const audio = SFX[name];
+
+          if (!audio) {
+            window.location.href = url;
+            return;
           }
+
+          SFX.pranam.pause();
+
+          let navigated = false;
+
+          const go = () => {
+            if (navigated) return;
+            navigated = true;
+            window.location.href = url;
+          };
+
+          audio.currentTime = 0;
+          audio.addEventListener("ended", go, { once: true });
+
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+              console.warn(`Could not play ${name} audio:`, err);
+              go();
+            });
+          }
+
+          setTimeout(go, MAX_NAV_WAIT);
+        }
+
+        /* ==================================================
+           LANGUAGE
+        =================================================== */
+
+        function getSavedLanguage() {
+          return localStorage.getItem(STORAGE_LANG_KEY) || DEFAULT_LANG;
+        }
+
+        function saveLanguage(lang) {
+          localStorage.setItem(STORAGE_LANG_KEY, lang);
+        }
+
+        function setActiveButton(activeBtn) {
+          [btnEn, btnHi, btnGu].forEach((btn) => {
+            if (btn) btn.classList.remove("active");
+          });
+
+          if (activeBtn) activeBtn.classList.add("active");
+        }
+
+        function applyLanguage(lang) {
+          const langData = translations[lang];
+
+          if (lang === "English") {
+            document.body.setAttribute("data-lang", "en");
+            setActiveButton(btnEn);
+          } else if (lang === "Hindi") {
+            document.body.setAttribute("data-lang", "hi");
+            setActiveButton(btnHi);
+          } else if (lang === "Gujarati") {
+            document.body.setAttribute("data-lang", "gu");
+            setActiveButton(btnGu);
+          }
+
+          saveLanguage(lang);
+          document.documentElement.lang = lang;
+
+          if (!langData) return;
+
+          document.querySelectorAll("[data-lang-key]").forEach((el) => {
+            const key = el.getAttribute("data-lang-key");
+            if (langData[key] !== undefined) {
+              el.innerHTML = String(langData[key]).replace(/\n/g, "<br>");
+            }
+          });
+        }
+
+        /* ==================================================
+           PAGE LOAD
+        =================================================== */
+
+        window.addEventListener("DOMContentLoaded", () => {
+          playPranamOnce();
+          applyLanguage(getSavedLanguage());
+
+          fetch("./assets/json/data.json")
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error(
+                  `data.json request failed with status ${res.status}`,
+                );
+              }
+              return res.json();
+            })
+            .then((data) => {
+              translations = data;
+              applyLanguage(getSavedLanguage());
+            })
+            .catch((err) => {
+              console.error("Error loading translations:", err);
+            });
         });
-      }
 
-      window.addEventListener("DOMContentLoaded", () => {
-        fetch("./assets/json/data.json")
-          .then((res) => res.json())
-          .then((data) => {
-            translations = data;
-            applyLanguage(DEFAULT_LANG);
-          })
-          .catch((err) => console.error("Error loading translations:", err));
-      });
+        /* ==================================================
+           EVENTS
+        =================================================== */
 
-      btnEn.addEventListener("click", () => applyLanguage("English"));
-      btnHi.addEventListener("click", () => applyLanguage("Hindi"));
-      btnGu.addEventListener("click", () => applyLanguage("Gujarati"));
+        if (btnEn) {
+          btnEn.addEventListener("click", () => applyLanguage("English"));
+        }
+
+        if (btnHi) {
+          btnHi.addEventListener("click", () => applyLanguage("Hindi"));
+        }
+
+        if (btnGu) {
+          btnGu.addEventListener("click", () => applyLanguage("Gujarati"));
+        }
+
+        if (backBtn) {
+          backBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            playThenNavigate("pop", backBtn.getAttribute("href"));
+          });
+        }
+
+        if (homeBtn1) {
+          homeBtn1.addEventListener("click", (e) => {
+            e.preventDefault();
+            playThenNavigate("home", homeBtn1.getAttribute("href"));
+          });
+        }
+      })();
     </script>
   </body>
 </html>

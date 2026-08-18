@@ -7,19 +7,188 @@
 
   <title>Document</title>
 
-  <link rel="stylesheet" href="./assets/css/style.css" />
-
   <!-- Swiper CSS -->
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    href="./assets/css/swiper-bundle.min.css"
   />
+
+  <link
+    rel="stylesheet"
+    href="./assets/css/style.css"
+  />
+
+  <style>
+    .pranam-link {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: 7vw!important;
+    bottom: 5vw;
+    width: 9vw;
+    height: auto;
+    text-decoration: none;
+    z-index: 9999;
+    pointer-events: auto;
+    cursor: pointer;
+    animation: pranamPop 1.2s ease-in-out infinite;
+    transform-origin: center;
+  }
+    
+.pranam-link img {
+  position: relative;
+  width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.pranam-link span {
+  position: absolute;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1.3vw;
+  padding-right: 1vw;
+    font-family: "BalooRegular";
+
+}
+
+@keyframes pranamPop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+  .pranam-link.show {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }.pranam-link {
+  position: absolute;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  right: 2vw;
+  bottom: 2vw;
+
+  width: 9vw;
+  height: auto;
+
+  text-decoration: none;
+  z-index: 9999;
+
+  cursor: pointer;
+
+  animation: pranamPop 1.2s ease-in-out infinite;
+  transform-origin: center;
+
+  /* HIDDEN BY DEFAULT */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+
+/* Visible only when JS adds .show */
+.pranam-link.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+.pranam-link img {
+  position: relative;
+  width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+
+.pranam-link span {
+  position: absolute;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1.3vw;
+  padding-right: 1vw;
+  font-family: "BalooRegular";
+}
+
+
+@keyframes pranamPop {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+  </style>
 </head>
 
 <body>
 
-  <!-- Background Video -->
+  
+ <a href="pranam.html" class="pranam-link">
+      <img src="./assets/images/arowAsset.png" alt="" />
+      <span data-lang-key="pranam"></span>
+    </a>
+
+  <!-- ==================================================
+       AUDIO
+  =================================================== -->
+
+  <!-- Topic / Page Click Audio -->
+  <audio
+    id="topic-audio"
+    src="./assets/audio/topic.mp3"
+    preload="auto"
+  ></audio>
+
+  <!-- Intro Click Audio -->
+  <audio
+    id="click-audio"
+    src="./assets/audio/click.mp3"
+    preload="auto"
+  ></audio>
+
+  <!-- Swiper Navigation Audio -->
+  <audio
+    id="swiper-audio"
+    src="./assets/audio/swiper.mp3"
+    preload="auto"
+  ></audio>
+
+
+  <!-- ==================================================
+       BACKGROUND VIDEO
+  =================================================== -->
+
   <video autoplay muted loop playsinline id="bg-video">
+
     <source
       src="./assets/videos/0_Calculator_Object_1920x1080.mp4"
       type="video/webm"
@@ -29,19 +198,28 @@
       src="./assets/videos/bg-video.mp4"
       type="video/mp4"
     />
+
   </video>
 
 
-  <!-- Home Button -->
+  <!-- ==================================================
+       HOME BUTTON
+  =================================================== -->
+
   <a class="home-button home-btn">
+
     <img
       src="./assets/images/home.png"
       alt="Home"
     />
+
   </a>
 
 
-  <!-- Intro -->
+  <!-- ==================================================
+       INTRO
+  =================================================== -->
+
   <div class="intro">
 
     <span data-lang-key="title"></span>
@@ -57,13 +235,21 @@
   </div>
 
 
-  <!-- Page Title -->
+  <!-- ==================================================
+       PAGE TITLE
+  =================================================== -->
+
   <div class="page-title">
+
     <span data-lang-key="title"></span>
+
   </div>
 
 
-  <!-- Language Buttons -->
+  <!-- ==================================================
+       LANGUAGE BUTTONS
+  =================================================== -->
+
   <div class="language-container">
 
     <div class="english active">
@@ -193,11 +379,305 @@
   </main>
 
 
-  <!-- Swiper JS -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- ==================================================
+       SCRIPTS
+  =================================================== -->
 
-  <!-- Your JS -->
+  <!-- Swiper JS -->
+  <script src="./assets/js/swiper-bundle.min.js"></script>
+
+  <script src="./assets/js/djp.js"></script>
+
+  <!-- Main JS -->
   <script src="./assets/js/app.js"></script>
+
+
+  <!-- ==================================================
+       AUDIO + LAST SLIDE NEXT BUTTON
+  =================================================== -->
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      // ================================================
+      // AUDIO ELEMENTS
+      // ================================================
+
+      const topicAudio =
+        document.getElementById("topic-audio");
+
+      const clickAudio =
+        document.getElementById("click-audio");
+
+      const swiperAudio =
+        document.getElementById("swiper-audio");
+
+
+      // ================================================
+      // BUTTONS
+      // ================================================
+
+      const clickButton =
+        document.querySelector(".click");
+
+      const prevButton =
+        document.querySelector(".prev-btn");
+
+      const nextButton =
+        document.querySelector(".next-btn");
+
+
+      // ================================================
+      // REUSABLE AUDIO FUNCTION
+      // ================================================
+
+      function playAudio(audio) {
+
+        if (!audio) return;
+
+        audio.pause();
+        audio.currentTime = 0;
+
+        const playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+
+          playPromise.catch(function (error) {
+
+            console.log(
+              "Audio play failed:",
+              error
+            );
+
+          });
+
+        }
+
+      }
+
+
+      // ================================================
+      // TOPIC CLICK
+      // Play topic.mp3
+      // ================================================
+
+      const topics =
+        document.querySelectorAll(".topic");
+
+      topics.forEach(function (topic) {
+
+        topic.addEventListener(
+          "click",
+          function () {
+
+            playAudio(topicAudio);
+
+          }
+        );
+
+      });
+
+
+      // ================================================
+      // .CLICK BUTTON
+      // Play click.mp3
+      // ================================================
+
+      if (clickButton) {
+
+        clickButton.addEventListener(
+          "click",
+          function () {
+
+            playAudio(clickAudio);
+
+          }
+        );
+
+      }
+
+
+      // ================================================
+      // PREVIOUS BUTTON
+      // Play swiper.mp3
+      // ================================================
+
+      if (prevButton) {
+
+        prevButton.addEventListener(
+          "click",
+          function () {
+
+            playAudio(swiperAudio);
+
+          }
+        );
+
+      }
+
+
+      // ================================================
+      // NEXT BUTTON
+      // Play swiper.mp3
+      // ================================================
+
+      if (nextButton) {
+
+        nextButton.addEventListener(
+          "click",
+          function () {
+
+            playAudio(swiperAudio);
+
+          }
+        );
+
+      }
+
+
+      // ================================================
+      // HIDE NEXT BUTTON ON LAST SLIDE
+      // ================================================
+
+      function updateNextButtonVisibility() {
+
+        const slides =
+          document.querySelectorAll(
+            "#content-swiper-wrapper .swiper-slide"
+          );
+
+        if (!slides.length || !nextButton) return;
+
+
+        const activeSlide =
+          document.querySelector(
+            "#content-swiper-wrapper .swiper-slide-active"
+          );
+
+        if (!activeSlide) return;
+
+
+        const lastSlide =
+          slides[slides.length - 1];
+
+
+        // Hide Next button on last slide
+        if (activeSlide === lastSlide) {
+
+          nextButton.style.display = "none";
+
+        } else {
+
+          nextButton.style.display = "";
+
+        }
+
+      }
+
+
+      // ================================================
+      // WATCH SWIPER FOR SLIDE CHANGES
+      // ================================================
+
+      const contentWrapper =
+        document.getElementById(
+          "content-swiper-wrapper"
+        );
+
+
+      if (contentWrapper) {
+
+        const observer =
+          new MutationObserver(function () {
+
+            updateNextButtonVisibility();
+
+          });
+
+
+        observer.observe(
+          contentWrapper,
+          {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ["class"]
+          }
+        );
+
+      }
+
+
+      // ================================================
+      // CHECK AFTER PREVIOUS / NEXT CLICK
+      // ================================================
+
+      if (prevButton) {
+
+        prevButton.addEventListener(
+          "click",
+          function () {
+
+            setTimeout(
+              updateNextButtonVisibility,
+              50
+            );
+
+          }
+        );
+
+      }
+
+
+      if (nextButton) {
+
+        nextButton.addEventListener(
+          "click",
+          function () {
+
+            setTimeout(
+              updateNextButtonVisibility,
+              50
+            );
+
+          }
+        );
+
+      }
+
+
+      // ================================================
+      // CHECK AFTER TOPIC CHANGE
+      // ================================================
+
+      topics.forEach(function (topic) {
+
+        topic.addEventListener(
+          "click",
+          function () {
+
+            setTimeout(
+              updateNextButtonVisibility,
+              100
+            );
+
+          }
+        );
+
+      });
+
+
+      // ================================================
+      // INITIAL CHECK
+      // ================================================
+
+      setTimeout(
+        updateNextButtonVisibility,
+        200
+      );
+
+    });
+  </script>
 
 </body>
 
