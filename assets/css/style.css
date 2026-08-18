@@ -21,8 +21,8 @@
 }
 
 @font-face {
-  font-family: "NotoSansGujaratiBold";
-  src: url("../../fonts/NotoSansGujarati-Bold.ttf") format("truetype");
+  font-family: "ITFDevanagari";
+  src: url("../../fonts/ITFDevanagari.ttc") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -31,11 +31,21 @@
 @font-face {
   font-family: "NotoSansGujaratiRegular";
   src: url("../../fonts/NotoSansGujarati-Regular.ttf") format("truetype");
-  font-weight: 400;
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
+
+body[data-lang="hi"] {
+  font-family: "ITFDevanagari"!important;
+  font-weight: 700!important;
+}
+
+body[data-lang="gu"] {
+  font-family: "NotoSansGujaratiRegular"!important;
+  font-weight: 700!important;
+}
 
 *,
 *::before,
@@ -140,7 +150,8 @@ body {
   border-radius: 50vw;
   pointer-events: auto;
   z-index: 1000;
-  transform: translateX(4vw);
+  opacity: 1;
+  /* transform: translateX(4vw); */
   transition:
     opacity 0.6s ease,
     transform 0.6s ease;
@@ -159,6 +170,7 @@ body {
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+    font-family: "BalooRegular"!important;
 }
 
 .language-container div:hover {
@@ -312,7 +324,6 @@ main {
 /* Initial hidden states */
 .page-title,
 .home-btn,
-.language-container,
 .topic-container {
   opacity: 0;
   pointer-events: none;
@@ -399,9 +410,10 @@ body.show-main .topic-container {
 
 .content-frame {
   position: absolute;
-  bottom: 2vw;
+  bottom: 1vw;
   width: 46vw;
   min-height: 5.5vw;
+  
   background: #145324;
   border-radius: 1vw;
   border: 0.22vw solid #db7a37;
@@ -422,7 +434,7 @@ body.show-main .topic-container {
   min-height: 5.5vw;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
 }
 
 .content-slide-inner {
@@ -433,6 +445,7 @@ body.show-main .topic-container {
   align-items: center;
   text-align: center;
   padding: 0.8vw 1.5vw;
+  background-color: red;
 }
 
 .content-slide-inner p {
@@ -442,6 +455,20 @@ body.show-main .topic-container {
   text-transform: uppercase;
   margin: 0;
   font-family: "SlugAndLion";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+body[data-lang="hi"] .content-slide-inner p {
+ font-size: 1.5vw;
+  line-height: 2.5vw!important;
+}
+
+body[data-lang="gu"] .content-slide-inner p{
+ font-size: 1.5vw;
+  line-height: 2.5vw!important;
 }
 
 .swiper-nav {
