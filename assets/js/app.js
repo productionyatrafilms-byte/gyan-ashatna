@@ -580,32 +580,40 @@ function createPages() {
         class="page page-4 active"
         href="topic-4.html"
         data-page="4"
-        data-lang-key="num-1"
-      ></a>
+      >
+        <span class="page-number" data-lang-key="num-1"></span>
+        <span class="page-hover-title" data-lang-key="title-4"></span>
+      </a>
 
 
       <a
         class="page page-1"
         href="topic-1.html"
         data-page="1"
-        data-lang-key="num-2"
-      ></a>
+      >
+        <span class="page-number" data-lang-key="num-2"></span>
+        <span class="page-hover-title" data-lang-key="title-1"></span>
+      </a>
 
 
       <a
         class="page page-2"
         href="topic-2.html"
         data-page="2"
-        data-lang-key="num-3"
-      ></a>
+      >
+        <span class="page-number" data-lang-key="num-3"></span>
+        <span class="page-hover-title" data-lang-key="title-2"></span>
+      </a>
 
 
       <a
         class="page page-3"
         href="topic-3.html"
         data-page="3"
-        data-lang-key="num-4"
-      ></a>
+      >
+        <span class="page-number" data-lang-key="num-4"></span>
+        <span class="page-hover-title" data-lang-key="title-3"></span>
+      </a>
 
     `;
 
@@ -755,6 +763,7 @@ function createSlides(
             <video
               playsinline
               muted
+              loop
               preload="metadata"
             >
 
