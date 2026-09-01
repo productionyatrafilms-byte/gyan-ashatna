@@ -1902,79 +1902,40 @@ window.addEventListener(
     );
 
 
-    fetch(
-      "./assets/json/data.json"
-    )
-
-      .then((res) => {
-
-        if (!res.ok) {
-
-          throw new Error(
-            `data.json request failed with status ${res.status}`
-          );
-
-        }
+    translations =
+      typeof data !== "undefined" ? data : {};
 
 
-        return res.json();
-
-      })
-
-
-      .then((data) => {
-
-        translations =
-          data;
+    applyLanguage(
+      getSavedLanguage()
+    );
 
 
-        applyLanguage(
-          getSavedLanguage()
-        );
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
 
 
-        const params =
-          new URLSearchParams(
-            window.location.search
-          );
+    const topicFromURL =
+      Number(
+        params.get(
+          "topic"
+        )
+      );
 
 
-        const topicFromURL =
-          Number(
-            params.get(
-              "topic"
-            )
-          );
+    if (
+      topicSlidesData[
+        topicFromURL
+      ]
+    ) {
 
+      showTopicSwiper(
+        topicFromURL
+      );
 
-        if (
-          topicSlidesData[
-            topicFromURL
-          ]
-        ) {
-
-          showTopicSwiper(
-            topicFromURL
-          );
-
-        }
-
-      })
-
-
-      .catch((err) => {
-
-        console.error(
-          "Error loading translations:",
-          err
-        );
-
-
-        console.error(
-          "If you opened index.html from the file system, serve the folder over http instead."
-        );
-
-      });
+    }
 
   }
 );

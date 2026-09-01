@@ -86,6 +86,7 @@
       </a>
     </div>
 
+    <script src="./assets/js/data.js"></script>
     <script src="./assets/js/djp.js"></script>
 
     <script>
@@ -241,22 +242,8 @@
           playPranamOnce();
           applyLanguage(getSavedLanguage());
 
-          fetch("./assets/json/data.json")
-            .then((res) => {
-              if (!res.ok) {
-                throw new Error(
-                  `data.json request failed with status ${res.status}`,
-                );
-              }
-              return res.json();
-            })
-            .then((data) => {
-              translations = data;
-              applyLanguage(getSavedLanguage());
-            })
-            .catch((err) => {
-              console.error("Error loading translations:", err);
-            });
+          translations = typeof data !== "undefined" ? data : {};
+          applyLanguage(getSavedLanguage());
         });
 
         /* ==================================================
