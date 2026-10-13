@@ -764,7 +764,7 @@ function createSlides(
               playsinline
               muted
               loop
-              preload="metadata"
+              preload="none"
             >
 
               <source
@@ -1245,6 +1245,9 @@ function pauseAllVideos() {
 
       video.pause();
 
+      // inactive slides must not download until their slide is reached
+      video.preload = "none";
+
 
       try {
 
@@ -1274,6 +1277,10 @@ function playActiveVideo(index) {
 
 
   if (!activeVideo) return;
+
+
+  // the active slide's video preloads fully
+  activeVideo.preload = "auto";
 
 
   try {
